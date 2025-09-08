@@ -6,6 +6,12 @@ from core.memory import Memory
 from core.router import ModelRouter
 from core.takeover_server import start_takeover_server, stop_takeover_server
 
+if sys.platform.startswith("win"):
+    try:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    except Exception:
+        pass
+
 class Agent:
     def __init__(self, policy_path: Path):
         self.memory = Memory(Path("runtime/memory"))

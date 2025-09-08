@@ -32,3 +32,18 @@ class WebSkill:
             val = await self.page.eval_on_selector(params["selector"], params["script"])
             return {"ok": True, "value": val}
         return {"ok": False, "error": "unknown web intent"}
+
+        async def teardown(self):
+        try:
+            if self.page:
+                await self.page.close()
+            if self.browser:
+                await self.browser.close()
+            if self.pw:
+                await self.pw.stop()
+        except Exception:
+            pass
+        finally:
+            self.page = None
+            self.browser = None
+            self.pw = None
