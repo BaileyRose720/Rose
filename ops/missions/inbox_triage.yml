@@ -1,0 +1,11 @@
+name: "Inbox triage + calendar draft"
+policy: "ops/policies/default.yml"
+steps:
+  - open_app: "msedge.exe"
+  - navigate: "https://outlook.office.com/mail/inbox"
+  - classify_threads: { label: "Action", limit: 25 }
+  - draft_replies: { style: "concise", max: 10 }
+  - navigate: "https://outlook.office.com/calendar/view/week"
+  - propose_events_from_threads: true
+  - generate_digest_pdf: "C:\\AI\\Rose\\runtime\\reports\\inbox_digest.pdf"
+  - stop_before_send: true

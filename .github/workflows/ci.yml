@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  syntax-check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Syntax check
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, sys, subprocess
+          files = [f for f in subprocess.check_output(['git','ls-files','*.py']).decode().split() if f.strip()]
+          failed = False
+          for f in files:
+            try:
+              compile(open(f,'rb').read(), f, 'exec')
+            except Exception as e:
+              print("Syntax error in", f, e)
+              failed = True
+          sys.exit(1 if failed else 0)
+          PY

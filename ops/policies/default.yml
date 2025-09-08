@@ -1,0 +1,19 @@
+identity: "Rose"
+fs:
+  read:  ["C:\\Projects", "C:\\AI\\Rose\\runtime", "C:\\Users\\%USERNAME%\\Downloads"]
+  write: ["C:\\AI\\Rose\\runtime", "C:\\AI\\Rose\\runtime\\reports"]
+network_allow:
+  - "*.roblox.com"
+  - "github.com"
+  - "*.google.com"
+  - "outlook.office.com"
+forbidden_actions:
+  - "purchase"
+  - "delete_files"
+  - "send_email_without_approval"
+run_limits:
+  max_runtime_minutes: 25
+  confirm_threshold: "high_risk"
+audit:
+  screenshots: true
+  action_log: true

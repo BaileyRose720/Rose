@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+runtime/edge_profile/
+runtime/logs/
+runtime/reports/*.pdf
+runtime/reports/*.md
+runtime/memory/
+runtime/sandbox/
+*.pyc
+.DS_Store
