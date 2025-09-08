@@ -8,6 +8,7 @@ class Planner:
 
     async def execute(self, mission: Dict[str, Any]):
         steps: List[Dict[str, Any]] = mission.get("steps", [])
+        keep_browser_open = bool(mission.get("keep_browser_open"))
         policy_path = mission.get("policy", "ops/policies/default.yml")
         ctx = {"mission": mission.get("name","unnamed"), "start": time.time(), "steps_done": 0}
         self.policy.load(policy_path)
@@ -51,11 +52,13 @@ class Planner:
                 decision = await takeover.wait()
                 takeover.clear()
                 if decision == "abort":
-                    return  # end mission immediately
+                    if not keep_browser_open:
+                        try: await web.teardown()
+                        except: pass
+                    return
 
-            try:
-                await web.teardown()
-            except Exception:
-                pass
+            if not keep_browser_open:
+            try: await web.teardown()
+            except: pass
 
         self.memory.finalize_run(ctx["mission"], ctx)

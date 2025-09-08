@@ -1,5 +1,6 @@
 name: "Inbox triage + calendar draft"
 policy: "ops/policies/default.yml"
+keep_browser_open: true
 steps:
   - open_app: "msedge.exe"
   - navigate: "https://outlook.office.com/mail/inbox"
