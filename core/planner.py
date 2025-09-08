@@ -1,5 +1,6 @@
 import time, asyncio
 from typing import Dict, Any, List
+from core.takeover import takeover
 
 class Planner:
     def __init__(self, router, memory, policy):
@@ -44,9 +45,13 @@ class Planner:
             self.memory.summarize_step(ctx["mission"], intent, params, result)
 
             if result.get("requires_confirmation"):
-                # In a fuller build, notify takeover UI; for now just pause
-                print(f"[TAKEOVER] Waiting for confirmation on step: {intent}")
-                await asyncio.sleep(0.1)
+                step_info = {"intent": intent, "params": params}
+                takeover.set_pending(step_info)
+                print(f"[TAKEOVER] Awaiting your decision at http://127.0.0.1:8765 …")
+                decision = await takeover.wait()
+                takeover.clear()
+                if decision == "abort":
+                    return  # end mission immediately
 
             try:
                 await web.teardown()
