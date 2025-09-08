@@ -48,9 +48,9 @@ class Planner:
                 print(f"[TAKEOVER] Waiting for confirmation on step: {intent}")
                 await asyncio.sleep(0.1)
 
-                    try:
-            await web.teardown()
-        except Exception:
-            pass
+            try:
+                await web.teardown()
+            except Exception:
+                pass
 
         self.memory.finalize_run(ctx["mission"], ctx)
