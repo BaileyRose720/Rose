@@ -57,7 +57,7 @@ class Planner:
                         except: pass
                     return
 
-            if not keep_browser_open:
+        if not keep_browser_open:
             try: await web.teardown()
             except: pass
 
