@@ -33,7 +33,7 @@ class WebSkill:
             return {"ok": True, "value": val}
         return {"ok": False, "error": "unknown web intent"}
 
-        async def teardown(self):
+    async def teardown(self):
         try:
             if self.page:
                 await self.page.close()
