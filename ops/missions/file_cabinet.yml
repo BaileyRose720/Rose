@@ -1,6 +1,6 @@
 name: "Downloads → File Cabinet"
 policy: "ops/policies/default.yml"
 steps:
-  - organize_downloads: { src: "C:\\Users\\%USERNAME%\\Downloads", dest: "C:\\AI\\Rose\\runtime\\sandbox" }
-  - extract_pdfs: { src: "C:\\AI\\Rose\\runtime\\sandbox", csv_out: "C:\\AI\\Rose\\runtime\\reports\\receipts.csv" }
-  - make_weekly_digest: { out: "C:\\AI\\Rose\\runtime\\reports\\files_digest.md" }
+  - organize_downloads: { src: "C:\\Users\\%USERNAME%\\Downloads", dest: "C:\\RoseAI\\runtime\\sandbox" }
+  - extract_pdfs: { src: "C:\\RoseAI\\runtime\\sandbox", csv_out: "C:\\RoseAI\\runtime\\reports\\receipts.csv" }
+  - make_weekly_digest: { out: "C:\\RoseAI\\runtime\\reports\\files_digest.md" }

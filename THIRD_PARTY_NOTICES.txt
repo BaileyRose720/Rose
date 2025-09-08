@@ -1,3 +1,0 @@
-This repository is inspired by the architectural patterns of ByteBot (Apache-2.0).
-If any ByteBot source code is copied into this repo, you must preserve the Apache-2.0 license headers
-and include the upstream NOTICE file content here.

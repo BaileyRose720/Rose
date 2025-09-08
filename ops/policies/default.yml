@@ -1,12 +1,17 @@
 identity: "Rose"
 fs:
-  read:  ["C:\\Projects", "C:\\AI\\Rose\\runtime", "C:\\Users\\%USERNAME%\\Downloads"]
-  write: ["C:\\AI\\Rose\\runtime", "C:\\AI\\Rose\\runtime\\reports"]
+  read:  ["C:\\Projects", "C:\\RoseAI\\runtime", "C:\\Users\\%USERNAME%\\Downloads"]
+  write: ["C:\\RoseAI\\runtime", "C:\\RoseAI\\runtime\\reports"]
 network_allow:
   - "*.roblox.com"
   - "github.com"
   - "*.google.com"
   - "outlook.office.com"
+  - "msedge.exe"
+  - "*.example.com"
+  - "localhost"
+  - "C:\\Projects"
+  - "C:\\RoseAI"
 forbidden_actions:
   - "purchase"
   - "delete_files"

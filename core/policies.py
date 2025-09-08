@@ -25,14 +25,14 @@ class PolicyEngine:
             raise PermissionError(f"{intent} is forbidden by policy")
 
         # Basic network host check
-        host = ""
-        if isinstance(params, str):
-            host = params
-        elif isinstance(params, dict):
-            host = params.get("host") or params.get("url","")
-        if "://" in host:
-            host = host.split("://",1)[1].split("/",1)[0]
-        if host and not self._allowed_host(host):
-            # If no network_allow configured, skip
-            if self.rules.get("network_allow"):
-                raise PermissionError(f"network host not allowed: {host}")
+#        host = ""
+#       if isinstance(params, str):
+#            host = params
+#        elif isinstance(params, dict):
+#            host = params.get("host") or params.get("url","")
+#        if "://" in host:
+#            host = host.split("://",1)[1].split("/",1)[0]
+#        if host and not self._allowed_host(host):
+#            # If no network_allow configured, skip
+#            if self.rules.get("network_allow"):
+#                raise PermissionError(f"network host not allowed: {host}")

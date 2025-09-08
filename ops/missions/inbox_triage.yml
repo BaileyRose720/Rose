@@ -7,5 +7,5 @@ steps:
   - draft_replies: { style: "concise", max: 10 }
   - navigate: "https://outlook.office.com/calendar/view/week"
   - propose_events_from_threads: true
-  - generate_digest_pdf: "C:\\AI\\Rose\\runtime\\reports\\inbox_digest.pdf"
+  - generate_digest_pdf: "C:\\RoseAI\\runtime\\reports\\inbox_digest.pdf"
   - stop_before_send: true

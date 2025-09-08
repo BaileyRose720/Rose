@@ -23,7 +23,7 @@ class Agent:
 
 async def main():
     agent = Agent(Path("ops/policies/default.yml"))
-    server_task = asyncio.create_task(run_takeover_server(port=8765))
+    await start_takeover_server(port=8765)
 
     import argparse
     p = argparse.ArgumentParser()
@@ -33,7 +33,7 @@ async def main():
     try:
         await agent.run_mission(Path(args.mission))
     finally:
-        server_task.cancel()
+        await stop_takeover_server()
 
 if __name__ == "__main__":
     try:
