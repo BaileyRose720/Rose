@@ -26,7 +26,7 @@ class Agent:
 
 async def main():
     agent = Agent(Path("ops/policies/default.yml"))
-    server_task = asyncio.create_task(run_takeover_server(port=8765))
+    server_task = asyncio.create_task(start_takeover_server(port=8765))
 
     import argparse
     p = argparse.ArgumentParser()
