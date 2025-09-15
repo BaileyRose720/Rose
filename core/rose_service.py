@@ -1,4 +1,10 @@
 import asyncio, sys, contextlib
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]  # C:\RoseAI
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from core.takeover_server import start_takeover_server, stop_takeover_server
 
 async def main():
