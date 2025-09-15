@@ -20,12 +20,12 @@ if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 Write-Host "Running with administrator privileges..." -ForegroundColor Green
 
 # Prefer venv Python if present
-$VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
-if (Test-Path $VenvPython) {
-    $Python = $VenvPython
-} else {
-    $Python = "python.exe"
-}
+#$VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
+#if (Test-Path $VenvPython) {
+#    $Python = $VenvPython
+#} else {
+#    $Python = "python.exe"
+#}
 
 # Command that the service runs (ONLY the Takeover server – no UI automation here)
 $Launcher = "$RepoRoot\ops\windows\rose_service_launcher.cmd"
