@@ -3,24 +3,30 @@ param(
     [string]$ServiceName = "RoseService"
 )
 
+# Prefer venv Python if present
 $VenvPython = Join-Path $RepoRoot ".venv\Scripts\python.exe"
-if (Test-Path $VenvPython) { $Python = $VenvPython } else { $Python = "python.exe" }
-
-$BinPath = "`"$Python`" `"$RepoRoot\core\rose_service.py`""
-
-Write-Host "Installing service $ServiceName with commanmd:"
-Write-Host $BinPath
-
-# Remove the Old Service if it exists
-sc.exe query $ServiceName | Out-Null
-if ($LASTEXITCODE -eq 0) {
-    sc.exe stop $ServiceName | Out-Null
-    sc.exe delete $ServiceName | Out-Null
-    Start-Sleep -Seconds 1
+if (Test-Path $VenvPython) {
+    $Python = $VenvPython
+} else {
+    $Python = "python.exe"
 }
 
-sc.exe create $ServiceName binPath= $BinPath start= auto | Out-Null
-sc.exe description $ServiceName "Rose Takeover Server (localhost:8765)" | Out-Null
+# Command that the service runs (ONLY the Takeover server – no UI automation here)
+$BinPath = "`"$Python`" `"$RepoRoot\core\rose_service.py`""
 
+Write-Host "Installing service $ServiceName with command:"
+Write-Host $BinPath
+
+# Best-effort cleanup without throwing
+try {
+    sc.exe stop $ServiceName | Out-Null
+    Start-Sleep -Milliseconds 500
+    sc.exe delete $ServiceName | Out-Null
+    Start-Sleep -Milliseconds 500
+} catch {}
+
+# Create & start service
+sc.exe create $ServiceName binPath= $BinPath start= auto | Out-Null
+sc.exe description $ServiceName "Rose Takeover Server (listens on http://127.0.0.1:8765)" | Out-Null
 sc.exe start $ServiceName | Out-Null
 sc.exe query $ServiceName
