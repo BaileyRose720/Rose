@@ -1,4 +1,29 @@
 identity: "Rose"
+
+mode: "autonomous"  # autonomous | cautious | strict
+
+# What counts as risky (you can tune this list)
+risk:
+  low:
+    - "navigate"
+    - "click"
+    - "type"
+    - "dom"
+    - "classify_threads"
+    - "make_weekly_digest"
+    - "organize_downloads"
+    - "extract_pdfs"
+    - "studio_run_tests"
+    - "studio_playtest"
+  medium:
+    - "draft_replies"
+    - "generate_digest_pdf"
+    - "studio_publish"  # confirm in cautious/strict only
+  high:
+    - "send_email_without_approval"
+    - "delete_files"
+    - "purchase"
+
 fs:
   read:  ["C:\\Projects", "C:\\RoseAI\\runtime", "C:\\Users\\%USERNAME%\\Downloads"]
   write: ["C:\\RoseAI\\runtime", "C:\\RoseAI\\runtime\\reports"]
@@ -12,13 +37,15 @@ network_allow:
   - "localhost"
   - "C:\\Projects"
   - "C:\\RoseAI"
+  
 forbidden_actions:
   - "purchase"
   - "delete_files"
   - "send_email_without_approval"
+
 run_limits:
   max_runtime_minutes: 25
-  confirm_threshold: "high_risk"
+
 audit:
   screenshots: true
   action_log: true
