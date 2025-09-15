@@ -28,7 +28,8 @@ if (Test-Path $VenvPython) {
 }
 
 # Command that the service runs (ONLY the Takeover server – no UI automation here)
-$BinPath = "`"$Python`" `"$RepoRoot\core\rose_service.py`""
+$Launcher = "$RepoRoot\ops\windows\rose_service_launcher.cmd"
+$BinPath  = "C:\Windows\System32\cmd.exe /C `"$Launcher`""
 
 Write-Host "Installing service $ServiceName with command:"
 Write-Host $BinPath
@@ -43,7 +44,7 @@ try {
 
 # Create & start service
 Write-Host "Creating service..."
-sc.exe create $ServiceName binPath= "$BinPath" start= auto 2>$null | Out-Null
+sc.exe create $ServiceName binPath= "$BinPath" start= auto | Out-Null
 sc.exe description $ServiceName "Rose Takeover Server (listens on http://127.0.0.1:8765)" 2>$null | Out-Null
 
 Write-Host "Starting service..."
