@@ -1,0 +1,17 @@
+name: "Autonomous Email Draft Demo"
+policy: "ops/policies/default.yml"
+
+steps:
+  - navigate:
+      url: "https://outlook.office.com/mail/"
+  - click:
+      selector: "button[aria-label='New mail']"
+  - type:
+      selector: "input[aria-label='To']"
+      text: "recipient@example.com"
+  - type:
+      selector: "input[aria-label='Add a subject']"
+      text: "Test from Rose (Autonomous Mode)"
+  - type:
+      selector: "div[aria-label='Message body']"
+      text: "Hello,\n\nThis is an autonomous draft created by Rose.\n\n— Bailey"
