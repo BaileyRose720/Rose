@@ -1,3 +1,8 @@
+if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Start-Process powershell -ArgumentList $arguments -Verb RunAs -Wait
+    exit $LASTEXITCODE
+}
+
 param(
     [string]$RepoRoot = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "..\..")).Path,
     [string]$ServiceName = "RoseService"
