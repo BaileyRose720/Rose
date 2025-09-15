@@ -1,10 +1,38 @@
 # core/takeover_server.py
 import asyncio
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from fastapi.responses import HTMLResponse, JSONResponse
 import uvicorn
 
 app = FastAPI()
+_current_mode = "autonomous"
+_panic_flag = asyncio.Event()
+
+@app.post("/mode")
+def set_mode(payload: dict = Body(...)):
+    global _current_mode
+    m = (payload.get("mode") or "").lower()
+    if m not in ("autonomous","cautious","strict"):
+        return JSONResponse({"ok": False, "error": "mode must be autonomous|cautious|strict"}, status_code=400)
+    _current_mode = m
+    # Also reflect into the policy file if you want persistence (not shown)
+    return {"ok": True, "mode": _current_mode}
+
+@app.get("/mode")
+def get_mode():
+    return {"mode": _current_mode}
+
+def current_mode() -> str:
+    return _current_mode
+
+@app.post("/panic")
+async def panic():
+    _panic_flag.set()
+    return {"ok": True}
+
+# Planner can poll this between steps if you want hard-stop-on-demand:
+def panic_requested() -> bool:
+    return _panic_flag.is_set()
 
 # --- approval state ---
 _decision_queue: asyncio.Queue[bool] = asyncio.Queue()

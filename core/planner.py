@@ -5,7 +5,7 @@ from core.takeover_server import request_decision
 class Planner:
     def __init__(self, router, memory, policy):
         self.router, self.memory, self.policy = router, memory, policy
-        self._web = None  # keep refs to close gracefully later
+        self._web = None
 
     async def execute(self, mission: Dict[str, Any]):
         steps: List[Dict[str, Any]] = mission.get("steps", [])
@@ -13,7 +13,6 @@ class Planner:
         ctx = {"mission": mission.get("name","unnamed"), "start": time.time(), "steps_done": 0}
         self.policy.load(policy_path)
 
-        # Lazy imports
         from skills.general.playwright_web import WebSkill
         from skills.life.inbox_triage import InboxSkill
         from skills.life.file_cabinet import FileCabinet
@@ -43,11 +42,9 @@ class Planner:
             ctx["steps_done"] += 1
             self.memory.summarize_step(ctx["mission"], intent, params, result)
 
-            if result.get("requires_confirmation"):
-                # 🔴 actually pause and wait for you to click Approve/Cancel
+            if self.policy.confirm_required(intent):
                 approved = await request_decision(f"Step '{intent}' needs approval.")
                 if not approved:
-                    # mark run cancelled but keep things tidy
                     break
 
         self.memory.finalize_run(ctx["mission"], ctx)
