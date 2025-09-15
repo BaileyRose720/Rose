@@ -33,17 +33,15 @@ class WebSkill:
             return {"ok": True, "value": val}
         return {"ok": False, "error": "unknown web intent"}
 
-    async def teardown(self):
+    async def close(self):
+        # close playwright resources cleanly (prevents Windows asyncio warnings)
         try:
             if self.page:
                 await self.page.close()
-            if self.browser:
-                await self.browser.close()
-            if self.pw:
-                await self.pw.stop()
-        except Exception:
-            pass
         finally:
-            self.page = None
-            self.browser = None
-            self.pw = None
+            try:
+                if self.browser:
+                    await self.browser.close()
+            finally:
+                if self.pw:
+                    await self.pw.stop()

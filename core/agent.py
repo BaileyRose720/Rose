@@ -20,16 +20,13 @@ class Agent:
         self.planner = Planner(self.router, self.memory, self.policy)
 
     async def run_mission(self, mission_path: Path):
-        if mission_path.suffix == ".json":
-            mission = json.loads(Path(mission_path).read_text())
-        else:
-            import yaml
-            mission = yaml.safe_load(Path(mission_path).read_text())
+        import yaml
+        mission = yaml.safe_load(Path(mission_path).read_text())
         await self.planner.execute(mission)
 
 async def main():
     agent = Agent(Path("ops/policies/default.yml"))
-    await start_takeover_server(port=8765)
+    server_task = asyncio.create_task(run_takeover_server(port=8765))
 
     import argparse
     p = argparse.ArgumentParser()
@@ -39,9 +36,15 @@ async def main():
     try:
         await agent.run_mission(Path(args.mission))
     finally:
-        await stop_takeover_server()
+        # 🔻 shut everything down cleanly
+        await agent.planner.close()
+        server_task.cancel()
+        with contextlib.suppress(Exception):
+            await server_task
+        await asyncio.sleep(0.1)  # let transports flush
 
 if __name__ == "__main__":
+    import contextlib
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
