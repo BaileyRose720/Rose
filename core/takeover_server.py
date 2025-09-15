@@ -53,39 +53,53 @@ async def cancel():
     return {"ok": True}
 
 async def request_decision(prompt: str = "Proceed?") -> bool:
-    """Planner calls this to pause until you click Approve/Cancel in the UI."""
     global _pending_text
     _pending_text = prompt
     decision = await _decision_queue.get()
     return decision
 
-# --- server lifecycle helpers ---
-
+# --- server lifecycle helpers (graceful) ---
 _server_task: asyncio.Task | None = None
+_server: uvicorn.Server | None = None
 
 async def _serve(port: int = 8765):
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning")
-    server = uvicorn.Server(config)
-    await server.serve()
+    global _server
+    config = uvicorn.Config(
+        app,
+        host="127.0.0.1",
+        port=port,
+        log_level="warning",
+        lifespan="off",           # <— avoid lifespan CancelledError noise
+    )
+    _server = uvicorn.Server(config)
+    await _server.serve()
 
 async def start_takeover_server(port: int = 8765):
-    """Background-start the takeover server. Safe to call once."""
     global _server_task
     if _server_task is None or _server_task.done():
         _server_task = asyncio.create_task(_serve(port))
     return True
 
 async def stop_takeover_server():
-    """Stop the takeover server if running."""
-    global _server_task
+    global _server_task, _server
+    # Tell server to exit cleanly
+    if _server is not None:
+        _server.should_exit = True
+    # Await task with timeout; only cancel if it hangs
     if _server_task:
-        _server_task.cancel()
         try:
-            await _server_task
-        except Exception:
-            pass
-        _server_task = None
+            await asyncio.wait_for(_server_task, timeout=2.0)
+        except asyncio.TimeoutError:
+            _server_task.cancel()
+            with contextlib.suppress(Exception):
+                await _server_task
+        finally:
+            _server_task = None
+            _server = None
 
-# Back-compat if something elsewhere imports this name:
+# Back-compat
 async def run_takeover_server(port: int = 8765):
     await _serve(port)
+
+# needed import
+import contextlib
