@@ -300,7 +300,7 @@ class PlaywrightWeb:
         await self.close()
         return {"ok": True}
     
-    class WebSkill(PlaywrightWeb):
+class WebSkill(PlaywrightWeb):
         """Alias to satisfy `from skills.general.playwright_web import WebSkill`."""
         pass
 
