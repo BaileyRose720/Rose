@@ -2,15 +2,37 @@ name: "Autonomous Email Draft Demo"
 policy: "ops/policies/default.yml"
 
 steps:
-  - navigate: "https://outlook.office.com/mail/"
-  - click:
-      selector: "button[aria-label='New mail']"
-  - type:
-      selector: "input[aria-label='To']"
-      text: "recipient@example.com"
-  - type:
-      selector: "input[aria-label='Add a subject']"
-      text: "Test from Rose (Autonomous Mode)"
-  - type:
-      selector: "div[aria-label='Message body']"
-      text: "Hello,\n\nThis is an autonomous draft created by Rose.\n\n— Bailey"
+  - skill: playwright_web
+    action: goto
+    params:
+      # Use your account type; deeplink first
+      url: "https://outlook.office.com/mail/deeplink/compose"
+
+  - skill: playwright_web
+    action: wait_for
+    params:
+      selector: "div[aria-label*='New message'], div[aria-label='Message']"
+      timeout_ms: 15000
+
+  - skill: playwright_web
+    action: fill
+    params:
+      selector: "input[aria-label='To'], div[aria-label='To'] input, [role='group'][aria-label='To'] input"
+      text: "${to}"
+  - skill: playwright_web
+    action: press
+    params:
+      selector: "input[aria-label='To'], div[aria-label='To'] input, [role='group'][aria-label='To'] input"
+      key: "Enter"
+
+  - skill: playwright_web
+    action: fill
+    params:
+      selector: "input[aria-label='Add a subject'], input[placeholder='Add a subject'], input[aria-label='Subject']"
+      text: "${subject}"
+
+  - skill: playwright_web
+    action: type_into_contenteditable
+    params:
+      selector: "div[aria-label='Message body'][contenteditable='true'], div[role='textbox'][contenteditable='true']"
+      text: "${body}"
