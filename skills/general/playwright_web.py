@@ -1,4 +1,5 @@
 import os
+import re
 from typing import Optional, Dict, Any, Callable
 
 from playwright.async_api import async_playwright, TimeoutError as PWTimeout
@@ -82,7 +83,7 @@ class PlaywrightWeb:
         # We’re probably in mailbox – click “New mail”
         new_btn = self.page.get_by_role(
             "button",
-            name=lambda n: n and ("new mail" in n.lower() or "new message" in n.lower() or n.strip() == "New"),
+            name=re.compile(r"^(New|New Mail|New message)$", re.I),
         )
         if await new_btn.count():
             await new_btn.first.click()
@@ -141,7 +142,7 @@ class PlaywrightWeb:
         await compose.page.keyboard.insert_text(body_text)
 
     async def _click_outlook_send(self, compose):
-        send = compose.get_by_role("button", name=lambda n: n and "send" in n.lower())
+        send = compose.get_by_role("button", name=re.compile(r"^Send$", re.I))
         if not await send.count():
             send = compose.locator("[data-automationid='SplitButtonPrimaryAction'], [data-automationid='send']")
         await send.first.wait_for(state="visible", timeout=10000)
@@ -258,12 +259,11 @@ class PlaywrightWeb:
         elif role and name:
             # Supports lambda name for case-insensitive matching
             if isinstance(name, str):
-                loc = self.page.get_by_role(role, name=name)
-            else:
-                # Assume callable for flexible matching (e.g., lambda n: "send" in n.lower())
+                loc = self.page.get_by_role(role, name=re.compile(re.escape(name), re.I))
+        elif hasattr(name, "pattern"):  # already a compiled regex
                 loc = self.page.get_by_role(role, name=name)
         else:
-            raise ValueError("click requires either 'selector' or both 'role' and 'name'")
+            raise ValueError("click with role requires name as str or compiled regex")
 
         await loc.first.wait_for(state="visible", timeout=15000)
         await loc.first.click()
@@ -299,3 +299,9 @@ class PlaywrightWeb:
     async def _act_close(self, _params: Dict[str, Any]):
         await self.close()
         return {"ok": True}
+    
+    class WebSkill(PlaywrightWeb):
+        """Alias to satisfy `from skills.general.playwright_web import WebSkill`."""
+        pass
+
+__all__ = ["WebSkill"]
