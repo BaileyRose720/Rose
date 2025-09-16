@@ -2,8 +2,7 @@ name: "Autonomous Email Draft Demo"
 policy: "ops/policies/default.yml"
 
 steps:
-  - navigate:
-      url: "https://outlook.office.com/mail/"
+  - navigate: "https://outlook.office.com/mail/"
   - click:
       selector: "button[aria-label='New mail']"
   - type:
